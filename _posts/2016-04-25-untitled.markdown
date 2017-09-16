@@ -1,0 +1,66 @@
+---
+layout: post
+title: Add/Increase Oracle redo logs
+date: '2016-04-25 23:03:53'
+---
+
+From time to time, I've needed to increase the size of the redo logs to increase the amount of time log switches were occurring.
+
+You may notice that your redo log sequence is increasing too frequently.
+ 
+View your current logs.
+
+<pre>SQL&gt; select a.group#, a.member, b.bytes from v$logfile a, v$log b  where a.group#=b.group#;</pre>
+
+<br>And then create at least 3 redo logs that reflect these logs. Use the next group number available.</br>
+
+<pre>SQL&gt; ALTER DATABASE ADD LOGFILE GROUP 7 ('/opt/oracle/app/oracle/oradata/mydb/redo07.log') SIZE 2048M;
+SQL&gt; ALTER DATABASE ADD LOGFILE GROUP 8 ('/opt/oracle/app/oracle/oradata/mydb/redo05.log') SIZE 2048M;
+SQL&gt; ALTER DATABASE ADD LOGFILE GROUP 9 ('/opt/oracle/app/oracle/oradata/mydb/redo06.log') SIZE 2048M;</pre>
+
+You'll probably also want to drop your old redo log groups which were too small.
+
+<pre>SQL&gt; SELECT GROUP#, ARCHIVED, STATUS FROM V$LOG;
+
+    GROUP# ARC STATUS
+---------- --- ----------------
+         4 NO  ACTIVE
+         5 NO  ACTIVE
+         6 NO  CURRENT
+         7 YES UNUSED
+         8 YES UNUSED
+         9 YES UNUSED
+
+6 rows selected.</pre>
+
+<br>Switch your log files until your old log files are "inactive".</br>
+
+<pre>SQL&gt; alter system switch logfile;
+
+System altered.
+
+SQL&gt;  SELECT GROUP#, ARCHIVED, STATUS FROM V$LOG;
+
+    GROUP# ARC STATUS
+---------- --- ----------------
+<strong>         5 NO  INACTIVE</strong>
+<strong>         6 NO  INACTIVE</strong>
+         7 NO  ACTIVE
+         8 NO  CURRENT
+         9 YES UNUSED
+
+SQL&gt; ALTER DATABASE DROP LOGFILE GROUP 5;
+
+Database altered.
+
+SQL&gt; ALTER DATABASE DROP LOGFILE GROUP 6;
+
+Database altered.
+
+SQL&gt; SELECT GROUP#, ARCHIVED, STATUS FROM V$LOG;
+
+    GROUP# ARC STATUS
+---------- --- ----------------
+         7 NO  ACTIVE
+         8 NO  CURRENT
+         9 YES UNUSED</pre>

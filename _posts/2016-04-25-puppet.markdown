@@ -1,0 +1,97 @@
+---
+layout: post
+title: Puppet in a Windows eco-system
+date: '2016-04-25 23:06:16'
+---
+
+Puppet, and in fact all continuous integration platforms (with the exception of SCCM, which is more or less exclusively used for client distribution, not continuous integration), are used in Linux and Unix (POSIX) ecosystems. Puppet though, has taken a large step, taking over the niche in the market for Windows, making Puppet the leading contender for Microsoft shops. Puppet integrates well with <a href="https://forge.puppetlabs.com/puppetlabs/powershell">PowerShell</a>, <a href="https://forge.puppetlabs.com/puppetlabs/dsc">PowerShell DSC</a>, <a href="https://forge.puppetlabs.com/puppetlabs/acl">Windows ACLs</a>, <a href="https://forge.puppetlabs.com/puppetlabs/registry">Window's registry</a>, <a href="https://forge.puppetlabs.com/puppetlabs/iis">IIS</a>, <a href="https://forge.puppetlabs.com/puppet/mssql">MS SQL</a>, and <a href="https://forge.puppetlabs.com/puppet/windowsfeature">adding/removing Window's features</a>. Microsoft even has a <a href="https://blogs.msdn.microsoft.com/powershell/2015/10/06/desired-state-configuration-puppet/">partnership</a> with Puppet to integrate DSC on the Puppet stack.
+<h2>Requirements</h2>
+The product owner wanted a GUI for easy visibility from IT managers down to technicians provisioning servers.
+
+The technical architects - the ones who would be coding - wanted something scalable.
+<h2>GUI</h2>
+There are really only two options available: <a href="http://theforeman.org">Foreman</a> and <a href="https://puppetlabs.com/puppet/puppet-enterprise">Puppet Enterprise</a>. Foreman is an open-source, freeware product supported by RedHat. Puppet Enterprise is PuppetLabs pay-for variant for their continuous integration product. If you are simply looking for reporting tools, there are, from the looks of them, a couple of pretty good ones out there.
+
+I have not set up Puppet Enterprise (PE), but if you are looking for a GUI that can accomplish the latest, coolest things in the Puppet sphere, and you have the money, you should take a look at there product.
+
+Foreman is good. It does not, as if this post, support Puppet 4. It's more aimed a provisioning services for a myriad of providers. I have blogged here about setting up our design in Foreman with one node.
+<h2>Architectural Design</h2>
+There are few design principles that PuppetLabs would like you to use to solve some of the common problems in code design, especially <a href="https://en.wikipedia.org/wiki/Abstraction">abstraction,</a> <a href="https://en.wikipedia.org/wiki/Separation_of_concerns">separation of concerns</a>, and <a href="https://en.wikipedia.org/wiki/Version_control">version control</a>.
+<h3>Abstraction</h3>
+We certainly want to abstract our code, so that our pieces are re-usable. We don't want to reinvent the wheel every time we need to automate a certain "thing". In this vain, Puppet uses a <a href="https://puppetlabs.com/presentations/designing-puppet-rolesprofiles-pattern">role/profile model</a> to abstract an organizations structure (the role) to implement the the technical infrastructure (the profile). This lets you're infrastructure build systems simply by grabbing the technical pieces for it to function. The technical pieces, in-turn, grab the building blocks (the modules) to make those technical functions work.
+
+Those building blocks, of-course, should be self-contained. A module performs one function and one function only. Just as a sub-class in a profile provides one function and one function only. Just as a role provides one function and one function only.
+
+An example of a site.pp could be this:
+<blockquote>
+<pre>node foo {
+  include role::bar
+}</pre>
+</blockquote>
+An example of a role class could be this:
+<blockquote>
+<pre>class role::bar {
+ include profile::myapp::db
+ }</pre>
+</blockquote>
+And an example of profile sub-class could be this:
+<blockquote>
+<pre>class profile::myapp::db {
+  $hostname = hiera(profile::my::db::hostname)
+  $dbname = hiera(profile::my::db::dbname)
+  $password = hiera(profile::my::db::password)
+
+  class mssql::install  {
+    hostname =&gt; $hostname,
+    dbname =&gt; $dbname,
+    password =&gt; $password,
+  }
+}</pre>
+</blockquote>
+Our infrastructure is now more or less abstracted. We can reuse modules and give them different information depending on how our infrastructure. Our profiles are reusable as well. If we need to install the same database on another server, no problem. And to top it off, we can separate our development, test and production environments. Hiera, our back end (more on this in a second), can have different values depending on whether we're dealing with dev, test or prod.
+
+As a side-note, a few guidelines about this design: Hiera data goes in the profile. Nodes shall only include one role. Roles can have several profiles. Profiles can be split off from our profile module to produce profiles that perhaps a vendor or different team would want to update.
+
+An example could be a module that looks like this:
+<blockquote>
+<pre>class teamA_profile::users {
+  user {'mark':
+    ensure =&gt; present,
+    managehome =&gt; true,
+    shell =&gt; '/bin/bash',
+    home =&gt; '/home/mark',
+  }</pre>
+</blockquote>
+The originator of this design is Craig Dunn. His video post is at PuppetLabs is <a href="https://puppetlabs.com/presentations/designing-puppet-rolesprofiles-pattern">here</a> and the original blog entry regarding this design is <a href="http://www.craigdunn.org/2012/05/239/">here</a>. An even more modern and updated version of this pattern is on Gary Larizza's site <a href="http://garylarizza.com/blog/2014/02/17/puppet-workflow-part-2/">here</a>.
+<h3>Separation of Concerns</h3>
+We certainly want our code encapsulated. We want to be able to configure an infrastructural component, say IIS or MS SQL, without knowing all the nuts and bolts lying in the code base. When we get right down to it,  we want to use a module without be forced to download the source and change a variable. We want to be able to use the module as is, but with our information. We want it to have well defined interface and we want the data separated from the code.
+<h4>Module interfaces</h4>
+Puppet has two ways to achieve "good" interfaces. Prior to 4.2, a so-called params pattern was used. This is still popular today. See PuppetLabs <a href="https://docs.puppetlabs.com/guides/module_guides/bgtm.html#step-two-module-structure">module design handbook</a> for a more detailed explanation. After 4.2, using Hiera lookups sand boxed inside the module appears to be gaining momentum. This is called "Data in Modules". You can read the author's use case and explanation <a href="https://www.devco.net/archives/2016/01/08/native-puppet-4-data-in-modules.php">here</a>. Personally, I prefer this approach. It's easier to scale. It's easier to handle pull requests, so it's easier for multiple people to collaborate on a module. Plus, the cherry on top is that it completely removes any data from the code.
+<h4>Separating your infrastructure's data</h4>
+Beyond creating good interfaces, just as in the use case for the data-in-modules design, you don't want your infrastructural data clogging up you're beautiful code. The solution is <a href="https://puppetlabs.com/blog/separation-concerns-how-hiera-helps">Hiera</a>.
+
+Hiera is Puppet's back end. It uses key/value pairs. Hiera is not a database per-se, rather the Puppet API in which one can attach a back-end. Current back-end projects include: <a href="https://github.com/crayfishx/hiera-mysql">MySQL</a>, <a href="https://github.com/dalen/hiera-psql">Postgres</a>, YAML or <a href="https://github.com/crayfishx/hiera-http">REST</a>. Hiera <a href="http://docs.puppetlabs.com/hiera/3.0/">is covered in detail by PuppetLabs</a>, so I won't cover it here. You can even <a href="https://docs.puppetlabs.com/hiera/3.0/custom_backends.html">create your own back end</a> if you like. Perhaps now that an <a href="https://msdn.microsoft.com/en-us/library/hh568451%28v=sql.110%29.aspx">MS SQL driver exists for Linux</a>, an MS SQL back end will be coming soon. This would certainly ease administration, allowing for users to be dropped in groups for access to certain tables or rows.
+
+I will though say that if you happen to reside in an infrastructure that has different teams, with differing responsibilities, you may want to move to a true database. In other words, stay away from YAML (the leading back-end provider). Why? YAML is simply a text file. While you can version-control it, you probably want to have that data accessible to the teams that are responsible for that data. You can provide that via a database or via REST and CouchDB. If a password needs to be changed to access a database, insert that information in the database. If a web service URI has changed, run a REST update. Moreover, if the day comes and you find that you have product owners, IT management and other non-technical types, you can easily toss up a front end. This isn't so easily accomplished with YAML.
+<h3>Version control</h3>
+If you are going to be using a sharp knife to automate your infrastructure, you certainly want to make changes in a controlled way. And when you screw up, you want to be able to fix them easily. You want to roll back your changes, just as easy as you roll forward your changes.
+
+Puppet has a Ruby gem that you can install to define which Git repositories to grab your modules from. You can define which branch, tag and version you want to use in each environment. You simply create a file called Puppetfile in each environment with an entry for each module and repository. You can read more about it <a href="https://docs.puppetlabs.com/pe/latest/cmgmt_puppetfile.html">here</a>.
+
+I find it easiest to run a frequent fetch as a scheduled job. This is my crontab:
+<blockquote>
+<pre># Production
+*/5 * * * * cd /etc/puppetlabs/puppet/environments/production; /usr/local/bin/r10k puppetfile install 
+# Test
+*/5 * * * * cd /etc/puppetlabs/puppet/environments/test; /usr/local/bin/r10k puppetfile install 
+# Development
+*/5 * * * * cd /etc/puppetlabs/puppet/environments/development; /usr/local/bin/r10k puppetfile install</pre>
+</blockquote>
+<h2>Summary</h2>
+In the end, your infrastructure should look something like this.
+
+<img class="alignnone size-full wp-image-379" src="https://lukesimmonsorg.files.wordpress.com/2016/02/puppet-design-new-page1.png" alt="Puppet Design - New Page(1).png" width="1120" height="480" />
+<h3>Testing (ToDo)</h3>
+Our code should be tested. Puppet provides a <a href="http://puppet-lint.com/">puppet-lint</a> to check and see if your manifests conform to the style guide. This is a nice thing to do as a pre-commit git hook. I know there are some of these floating around and the next project is to get these tested.
+
+<a href="http://rspec-puppet.com/">Puppet-Rspec</a> can check if and see if your manifests are compiling correctly. I'm sure these work as well as a pre-commit Git hook, but I have not tried them yet.

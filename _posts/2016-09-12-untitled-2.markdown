@@ -1,0 +1,21 @@
+---
+layout: post
+title: Using an External (Bridged) Network in Hyper-V
+date: '2016-09-12 10:21:42'
+---
+
+My Hyper-V Manager did not include any Virtual Networks by default, but you can easily set one up. This blog entry though is not about adding a virtual network in Hyper-V Manager. Most people should be able to find this information elsewhere. Rather, this is a blog entry about configuring a bridged virtual network card, as this wasn't as straight-forward as I'd expected. I experienced a network collision between my host's network and the virtual network, which required a small setting change in the network setting's of the built-in network adapter.
+
+###### HowTo
+
+1. Create an external virtual network entry. Choose your wired ethernet connection. And be sure that you "Allow your operatingsystem to share this network card".
+
+![](/content/images/2016/09/create-network.png)
+
+2. Go into network setting and share your built-in adapter.
+
+![](/content/images/2016/09/shared-connection-1.png)
+
+And check that you are allowing this connection to be shared with your bridged network adapter.
+
+3. Also be sure to check your DHCP settings. For some reason, either a GPO or the default settings of the new virtual adapter, the settings were 
