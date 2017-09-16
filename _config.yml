@@ -1,4 +1,4 @@
 theme: jekyll-theme-tactile
-title: [Luke Simmons]
-description: [An Ops programming blog]
-show_downloads: [ false ]
+title: Luke Simmons
+description: An Ops programming blog
+show_downloads: "false"
