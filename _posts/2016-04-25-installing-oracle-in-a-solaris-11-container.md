@@ -8,7 +8,7 @@ Solaris containers (or zones) make a perfect platform for Oracle databases. Cont
 
 You can read more about resource pools in Solaris <a href="https://docs.oracle.com/cd/E19683-01/817-1592/rmpool.task-1/index.html">here</a>. Brenden Gregg also has a nice blogg entry with examples <a href="http://www.brendangregg.com/zones.html">here</a>.
 
-######Configuring
+##Configuring
 Install the following packages to get X working:
 <pre>pkg install pkg://solaris/library/motif
 pkg install pkg://solaris/compatibility/packages/SUNWxwplt</pre>
@@ -30,7 +30,7 @@ Memory size: 262016 Megabytes</pre>
 
 <br>This is also confirmed <a href="https://docs.oracle.com/cd/E11882_01/install.112/e24349/toc.htm#CDEEHBFC">here</a>.</br>
 
-######Solaris 10
+##Solaris 10
 On Solaris 10, you will need to allocate a pool, otherwise you will run into shared-memory allocation problems.
 
 I haven't tested my old documents for awhile now, and <a href="https://blogs.oracle.com/mandalika/entry/oracle_on_solaris_10_fixing">this blog</a> entry from Oracle is certainly more comprehensive, but something along these lines should work.
