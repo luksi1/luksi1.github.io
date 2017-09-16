@@ -7,6 +7,10 @@ Hi this is Luke. Bla bla bla.
 
 ## Recent posts
 
-- this is apost
-- this is another post
-- this is another post
+<ul>
+  {% for post in site.posts %}
+    <li>
+      <a href="{{ post.url }}">{{ post.title }}</a>
+    </li>
+  {% endfor %}
+</ul>
