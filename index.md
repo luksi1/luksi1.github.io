@@ -2,7 +2,7 @@
 layout: default
 ---
 
-Hi this is Luke. Bla bla bla. Bla. Bla.
+My name is Luke.
 
 ## Puppet
 <hr />
