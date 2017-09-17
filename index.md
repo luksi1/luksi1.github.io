@@ -6,9 +6,14 @@ Hi this is Luke. Bla bla bla.
 
 ## Puppet
 
+<table>
 {% for post in site.categories.Puppet %}
- <li><span>{{ post.date | date_to_string }}</span> &nbsp; <a href="{{ post.url }}">{{ post.title }}</a></li>
+ <tr>
+ <td><span>{{ post.date | date_to_string }}</span></td>
+ <td><a href="{{ post.url }}">{{ post.title }}</a></td>
+ </tr>
 {% endfor %}
+</table>
 
 ## Recent posts
 <hr />
