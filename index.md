@@ -6,7 +6,7 @@ Hi this is Luke. Bla bla bla.
 
 ## Puppet
 
-<table>
+<table border=0px>
 {% for post in site.categories.Puppet %}
  <tr>
  <td><span>{{ post.date | date_to_string }}</span></td>
