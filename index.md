@@ -9,7 +9,7 @@ My name is Luke.
 <table>
 {% for post in site.categories.Puppet %}
 <tr>
-<td><span>{{ post.date | date_to_string }}</span></td>
+<td><span>{{ post.date | date: "%Y-%m-%d" }}</span></td>
 <td><a href="{{ post.url }}">{{ post.title }}</a></td>
 </tr>
 {% endfor %}
