@@ -2,6 +2,7 @@
 layout: post
 title: Puppet in a Windows eco-system
 date: '2016-04-25 23:06:16'
+categories: [Puppet]
 ---
 
 Puppet, and in fact all continuous integration platforms (with the exception of SCCM, which is more or less exclusively used for client distribution, not continuous integration), are used in Linux and Unix (POSIX) ecosystems. Puppet though, has taken a large step, taking over the niche in the market for Windows, making Puppet the leading contender for Microsoft shops. Puppet integrates well with <a href="https://forge.puppetlabs.com/puppetlabs/powershell">PowerShell</a>, <a href="https://forge.puppetlabs.com/puppetlabs/dsc">PowerShell DSC</a>, <a href="https://forge.puppetlabs.com/puppetlabs/acl">Windows ACLs</a>, <a href="https://forge.puppetlabs.com/puppetlabs/registry">Window's registry</a>, <a href="https://forge.puppetlabs.com/puppetlabs/iis">IIS</a>, <a href="https://forge.puppetlabs.com/puppet/mssql">MS SQL</a>, and <a href="https://forge.puppetlabs.com/puppet/windowsfeature">adding/removing Window's features</a>. Microsoft even has a <a href="https://blogs.msdn.microsoft.com/powershell/2015/10/06/desired-state-configuration-puppet/">partnership</a> with Puppet to integrate DSC on the Puppet stack.
