@@ -6,7 +6,6 @@ Hi this is Luke. Bla bla bla. Bla. Bla.
 
 ## Puppet
 <hr />
-
 <table>
 {% for post in site.categories.Puppet %}
 <tr>
@@ -18,12 +17,10 @@ Hi this is Luke. Bla bla bla. Bla. Bla.
 <br />
 ## Recent posts
 <hr />
-
 <table>
-<th>Recent posts</th>
 {% for post in site.posts limit:10 %}
 <tr>
-<td><span>{{ post.date | date_to_string }}</span>
+<td><span>{{ post.date | date_to_string }}</span></td>
 <td><a href="{{ post.url }}">{{ post.title }}</a></td>
 </tr>
 {% endfor %}
