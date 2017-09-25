@@ -2,7 +2,7 @@
 layout: default
 ---
 
-My name is Luke.
+I am a Unix operations programmer, agile guru, and lover of continious integration.
 
 ## Puppet
 <hr />
