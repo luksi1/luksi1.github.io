@@ -1,5 +1,6 @@
 ---
-layout: default
+layout: index
+title: Home
 ---
 
 I am a Unix operations programmer, agile guru, and lover of continious integration.
