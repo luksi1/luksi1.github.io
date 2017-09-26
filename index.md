@@ -3,7 +3,7 @@ layout: index
 title: Home
 ---
 
-I am a Unix operations programmer, agile guru, and lover of continious integration.
+Hi. My name is Luke Simmons. I'm an American expat raising three kids with my wife in Gothenburg, Sweden. I have a passion for the forest, chantarells, fika, and programming in the operations sphere. Puppet, Docker, and Ubuntu is the sauce. Perl, Python, Java, C#, PowerShell, Ruby, and Bash is the salt and pepper.
 
 ## Puppet
 <hr />
