@@ -2,16 +2,16 @@
 layout: index
 title: Home
 ---
-## Recent posts
-<hr />
-<table>
+<ul class="posts-list">
 {% for post in site.posts limit:10 %}
-<tr>
-<td><span>{{ post.date | date_to_string }}</span></td>
-<td><a href="{{ post.url }}">{{ post.title }}</a></td>
-</tr>
+<li>
+  <h3>
+    <a href="{{ post.url }}">{{ post.title }}
+    <small>{{ post.date | date_to_string }}</small><a>
+  </h3>
+</li>
 {% endfor %}
-</table>
+</ul>
 
 ## Puppet
 <hr />
