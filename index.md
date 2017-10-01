@@ -3,7 +3,7 @@ layout: index
 title: Home
 ---
 <ul class="posts-list">
-{% for post in site.posts limit:10 %}
+{% for post in site.posts limit:20 %}
 <li>
   <h3>
     <a href="{{ post.url }}">{{ post.title }}</a>
