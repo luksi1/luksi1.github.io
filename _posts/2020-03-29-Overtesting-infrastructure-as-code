@@ -1,0 +1,6 @@
+## Profiles and Roles
+
+If we follow the profiles and roles concept of Craig Dunn at Puppetlabs, as well as best practice from PuppetLabs, Chef, Ansbile, and Saltstack, we should get an code stack code stack that follows the single-responsibility principles, seperation-of-concerns, and is highly testable (but maybe not in the way you might think).
+
+As you maneuver the minefield of information about these principles, it might not dawn on you that a "profile" is simply a main function to a program. It's simply an entrypoint to your stack. Everything else underneath it is a dependency. Those dependencies should have well defined interfaces and have high unit test coverage for the varying ways you might want to call those interfaces.
+
