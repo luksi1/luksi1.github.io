@@ -2,7 +2,7 @@
 
 SOLID principles are the cornerstone of object-oriented programming and for good reason. These principles allow us to produce flexible, testable, and clearly defined digital nuggets that can continuously provide customer value throughout their lifetime.
 
-
+In the following sections, I'll take a look at how to apply SOLID concepts to IaC, the natural evolution of an IaC monolith, the pitfalls of that evolution, and some ways to address those pitfalls.
 
 ## SOLID
 
@@ -54,9 +54,23 @@ This type of design attempts to fullfil these principles. Each module has a sing
 
 ### IaC design gone to shit
 
-As I've journeyed through spaghetti code (many times of my own doing), I've attempted to abstract it, create an interface, document it, and test it. As I moved down this path, I noticed that as my modules grew, so did my monolith (you still have to apply these modules!). Your "roles" file or your "profile" file becomes larger and it gets ungainly and more or less unmaintanable. Even just a few people merging code to your monolith can create a merge hell state. "QA needs this version." "But I need to merge my code to production". It starts to go down hill fast.
+We can use SOLID design principles to create well-defined, manageable modules, but what happens when your monolith get unruly? A few applications become a hundred. Even a few people merging to the same repsoitory can quickly escalate into merge hell.
 
+#### Release your infrastructure
 
+Your "roles" module or your "profiles" module needs to be released like regular code. Tag it. Create a CHANGELOG. Create a release candidate and promote it eventually to production.
+
+#### Choose a branching strategy
+
+Choose GitFlow, GitHubFlow, GitLabFlow... whatever. Choose a flow and stick with it. All of these strategies requires branching. Branch your feature and submit merge requests. Your team will be happy and those pitfalls should start to magically disappear.
+
+#### Unit test your modules
+
+If you are going to have a well-defined contract that is going to do one specific thing, it's import to test the various ways someone might be able to call that interface, so that you can be assured that your module delivers what it says it will deliver. What happens if you try to install a package on Gentoo, SUSE, RedHat, Ubuntu... What happens if I try to install an ssh key on Windows? A module should be able to handle these use cases (or not handle them, but then they should exit gracefully).
+
+#### Don't unit test your "roles" or "profiles"
+
+This sounds counterintuitive, but you would never unit test a "main" function in a software program. That's absurd. Your "roles" or "profile" is a "main" class or an entrypoint to your infrastructure. This should not be unit tested (and if so, only so that it compiles). It should though have integration tests, system tests and the works. It's easy to get bogged down in unit testing here, but don't. It provides no value and that logic should have been already tested in your module.
 
 ## Profiles and Roles
 
