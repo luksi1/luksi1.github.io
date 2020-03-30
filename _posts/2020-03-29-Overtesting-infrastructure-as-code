@@ -1,3 +1,63 @@
+# Applying SOLID principles to Infrastructure-as-Code
+
+SOLID principles are the cornerstone of object-oriented programming and for good reason. These principles allow us to produce flexible, testable, and clearly defined digital nuggets that can continuously provide customer value throughout their lifetime.
+
+
+
+## SOLID
+
+SOLID is an mneumonic acronym for:
+
+- Single-responsibility principle
+- Open-closed principle
+- Liskov substituion principle
+- Interface segmentation principle
+- Dependency inversion principle
+
+### Single-responsibility principle
+
+A class should do one thing and only one thing.
+
+### Open-closed principle
+
+A class should be open for extension, but closed for modification.
+
+### Liskov substitution principle
+
+An object should be able to be replaced by any of its subtypes, without altering the subtypes behavior. We'll focus mostly on design by contract, which is the basis for this principle.
+
+### Interface segmentation principle
+
+Client specific interfaces are better than broad catch-all interfaces.
+
+### Dependency inversion principle
+
+Modules should depend on abstractions. Programs should not be built like pyramids, but rather each building block should have a clear abstraction layer.
+
+## Infrastructure as Code
+
+SOLID principles are used as the basis for virtually all, if not all, object oriented software. These principles exist so that software can be more flexible, maintainable, and usable. This guide will attempt to apply these same methods to Infrastructure as Code.
+
+### Problems
+
+What do you do when you need to modify your PowerShell script that it is well over 2 000 lines of code? What do you do when you realize that thing you're automatically can't be tested? And that thing has now become VERY important for the life of the enterprise? What do you do when you realize that only you can use your code? These are not problems I've heard on the streets. These are problems I've experienced first hand. I've also come to understand that these problems are not unique to IaC. In fact, SOLID principles were designed 30 years ago to tackle these specific software design problems. Here, we're going to use these principles to tack IaC design problems.
+
+### IaC design
+
+You should be using some way to abstract your IaC modules. You should never be building code to get the status of a service or install a package. These code nuggets should be abstracted, tested, and have a clear interface and then, and only then, can these nuggets be used to build something greater. 
+
+In Puppet this is applied with "roles and profiles". In Ansibile, it's applied with "roles". Although I don't know every IaC tool out there, I would argue that if you do not have the ability to create a tower will Legos, but are rather forced to mold your own tower, you would probably be best served looking elsewhere.
+
+"Role and profiles" in Puppet and "roles" in Ansible allow you to build modules with clearly defined interfaces. For example, you can create a MySQL module. You can create an Oracle module. You can create an IIS module. You can then tie these modules together to produce some sort of business value.
+
+This type of design attempts to fullfil these principles. Each module has a single responsibility. Each module is open for extension (we can for example add a provider to for Gentoo or FreeBSD), but it's closed for modification. Each module has a specific contract and a specific client interface. Finally, are dependency is only on the interface of these modules, not on their concretions.
+
+### IaC design gone to shit
+
+As I've journeyed through spaghetti code (many times of my own doing), I've attempted to abstract it, create an interface, document it, and test it. As I moved down this path, I noticed that as my modules grew, so did my monolith (you still have to apply these modules!). Your "roles" file or your "profile" file becomes larger and it gets ungainly and more or less unmaintanable. Even just a few people merging code to your monolith can create a merge hell state. "QA needs this version." "But I need to merge my code to production". It starts to go down hill fast.
+
+
+
 ## Profiles and Roles
 
 If we follow the profiles and roles concept of Craig Dunn at Puppetlabs, as well as best practice from PuppetLabs, Chef, Ansbile, and Saltstack, we should get an code stack code stack that follows the single-responsibility principles, seperation-of-concerns, and is highly testable (but maybe not in the way you might think).
