@@ -71,16 +71,3 @@ If you are going to have a well-defined contract that is going to do one specifi
 #### Don't unit test your "roles" or "profiles"
 
 This sounds counterintuitive, but you would never unit test a "main" function in a software program. That's absurd. Your "roles" or "profile" is a "main" class or an entrypoint to your infrastructure. This should not be unit tested (and if so, only so that it compiles). It should though have integration tests, system tests and the works. It's easy to get bogged down in unit testing here, but don't. It provides no value and that logic should have been already tested in your module.
-
-## Profiles and Roles
-
-If we follow the profiles and roles concept of Craig Dunn at Puppetlabs, as well as best practice from PuppetLabs, Chef, Ansbile, and Saltstack, we should get an code stack code stack that follows the single-responsibility principles, seperation-of-concerns, and is highly testable (but maybe not in the way you might think).
-
-As you maneuver the minefield of information about these principles, it might not dawn on you that a "profile" is simply a main function to a program. It's simply an entrypoint to your stack. Everything else underneath it is a dependency. Those dependencies should have well defined interfaces and have high unit test coverage for the varying ways you might want to call those interfaces.
-
-https://www.digitalocean.com/community/tutorials/how-to-use-ansible-roles-to-abstract-your-infrastructure-environment
-https://youtu.be/ZpHtOnlSGNY - Craig Dunn
-https://puppet.com/docs/pe/2018.1/the_roles_and_profiles_method.html
-
-
-https://coderanger.net/overtesting/
