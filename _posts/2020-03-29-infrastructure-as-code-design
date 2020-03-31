@@ -1,14 +1,5 @@
 ---
 layout: post
-title: Installing ActiveMQ on Ubuntu 16.04 for use with Mcollective
-date: '2016-09-23 14:23:40'
-categories: [Puppet]
----
-
-I was getting a lot of errors while attempting to install an ActiveMQ server for use with Mcollective. Following the Puppet docs for Mcollective [here](https://docs.puppet.com/mcollective/deploy/standard.html), I got several errors and eventually had to abandon Ubuntu's ActiveMQ repository package. This is due to the fact that a mess of features are missing. 
-
----
-layout: post
 title: Infrastructure as Code Design
 date: '2020-03-29 22:58:17'
 ---
