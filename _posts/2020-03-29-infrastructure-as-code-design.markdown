@@ -7,6 +7,8 @@ categories: IaC
 
 SOLID principles are the cornerstone of object-oriented programming and for good reason. These principles allow us to produce flexible, testable, and clearly defined digital nuggets that can continuously provide customer value throughout their lifetime.
 
+Why would this be interesting to Infrastructure as Code peeps? Software development, in my simple-minded view, has already gone through the shenanigans of shitty, untested, non-extensible code. The phone calls to developers at midnight are all but gone. But while these struggles and growing pains occurred in the world of devs, the ops folks were SSHing and RDPing away to install files and install packages, chatting away about filesystems, kernel parameters, and networking, while the server parks grew and digitalization journeys began to grow exponentially larger than the amount of technicians that could SSH in and turn those digitalization journeys into reality. Puppet, Chef, Saltstack, and Ansibile began to resolve a lot of the problem in ops by providing a toolset to attack their infrastructure as if it was code and thus begin the journey for many an Ops techy down the road of code development. Unfortunately, that journey is fraught with the same pitfalls of shitty, untested, non-extensible code. Did we really think we wouldn't have the same growing pains?
+
 In the following sections, I'll take a look at how to apply SOLID concepts to IaC, the natural evolution of an IaC monolith, the pitfalls of that evolution, and some ways to address those pitfalls.
 
 ## SOLID
@@ -43,7 +45,15 @@ Modules should depend on abstractions. Programs should not be built like pyramid
 
 SOLID principles are used as the basis for virtually all, if not all, object oriented software. These principles exist so that software can be more flexible, maintainable, and usable. This guide will attempt to apply these same methods to Infrastructure as Code.
 
-### Problems
+### Problem - Day 1
+
+If you're one of those lucky people that have gone cloud-only, your Day 1 has probably gone the way of the telegram. For those of us stuck in the world of virtual machines, SSH and RDP, you're stuck with operating a lot of shit. This shit is the on-site Sharepoint and Exchange servers, the on-site Elasticsearch and Splunks clusters, the on-site Oracle RAC clusters, the on-site IIS servers and butt loads of random MSSQL servers. All of those servers need to get provisioned and that expensive software needs to get installed. In my experience at one of the largest healthcare providers in Scandinavia, the pain point simply becomes not having enough competent hands. The digitalization journey is just running at a faster pace than those hands can type. Something has to give.
+
+This is where configuration management tools come in and save the day. Ansible, Puppet, Chef, or Saltstack provide toolsets so that these hands can begin to program up their infrastructure. Upgrades in the future can start with an existing code base. Those lovely Windows end-of-life projects can now simply begin with the click of a button. Those new public SSH keys can be installed on all of those hundreds of Unix servers with a click. Everybody breathes a sigh of relief and some of that pain is gone. We never thought we'd make it and yet now we just automated some of this shit that was taking forever to do manually.
+
+### Problem - Day 2
+
+Things are going along smoothly. Your server though turn yellow in Nagios, warning that 30 certificates are going to expire in 14 days, so you send away a CSR to Verisign and your feeling cool. You got this shit automated. You'll just... wait. Shit. We didn't encrypt anything.
 
 What do you do when you need to modify your PowerShell script that it is well over 2 000 lines of code? What do you do when you realize that thing you're automatically can't be tested? And that thing has now become VERY important for the life of the enterprise? What do you do when you realize that only you can use your code? These are not problems I've heard on the streets. These are problems I've experienced first hand. I've also come to understand that these problems are not unique to IaC. In fact, SOLID principles were designed 30 years ago to tackle these specific software design problems. Here, we're going to use these principles to tack IaC design problems.
 
