@@ -2,6 +2,7 @@
 layout: post
 title: Infrastructure as Code Design
 date: '2020-03-29 22:58:17'
+categories: IaC
 ---
 
 SOLID principles are the cornerstone of object-oriented programming and for good reason. These principles allow us to produce flexible, testable, and clearly defined digital nuggets that can continuously provide customer value throughout their lifetime.
