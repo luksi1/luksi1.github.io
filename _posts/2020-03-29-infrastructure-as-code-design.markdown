@@ -45,9 +45,11 @@ Modules should depend on abstractions. Programs should not be built like pyramid
 
 SOLID principles are used as the basis for virtually all, if not all, object oriented software. These principles exist so that software can be more flexible, maintainable, and usable. This guide will attempt to apply these same methods to Infrastructure as Code.
 
-### Problem - Day 1
+### Day 1
 
-If you're one of those lucky people that have gone cloud-only, your Day 1 has probably gone the way of the telegram. For those of us stuck in the world of virtual machines, SSH and RDP, you're stuck with operating a lot of shit. This shit is the on-site Sharepoint and Exchange servers, the on-site Elasticsearch and Splunks clusters, the on-site Oracle RAC clusters, the on-site IIS servers and butt loads of random MSSQL servers. All of those servers need to get provisioned and that expensive software needs to get installed. In my experience at one of the largest healthcare providers in Scandinavia, the pain point simply becomes not having enough competent hands. The digitalization journey is just running at a faster pace than those hands can type. Something has to give.
+If you're one of those lucky people that have gone cloud-only, your Day 1 has probably gone the way of the telegram. For those of us stuck in the world of virtual machines, SSH, RDP, and tedious change orders you're stuck with operating a lot of shit and hopping through a spider web of bureaucracy. This "shit" piles up. Sharepoint. Exchange. Elasticsearch. An Oracle RAC cluster here. A hand full of MS SQL server there. A splatter of IIS servers. Everybody has an ESB hanging around. All of those servers need to get provisioned and that expensive software isn't going to install itself. All of this starts though to grow. The pain point simply becomes not having enough competent hands. The digitalization journey is just running at a faster pace than those hands can type. Something has to give. For us, we simply wanted a way to easily manage SSH keys and Tivoli Storage Manager configurations for a few hundred servers.
+
+### Day 2
 
 This is where configuration management tools come in and save the day. Ansible, Puppet, Chef, or Saltstack provide toolsets so that these hands can begin to program up their infrastructure. Upgrades in the future can start with an existing code base. Those lovely Windows end-of-life projects can now simply begin with the click of a button. Those new public SSH keys can be installed on all of those hundreds of Unix servers with a click. Everybody breathes a sigh of relief and some of that pain is gone. We never thought we'd make it and yet now we just automated some of this shit that was taking forever to do manually.
 
