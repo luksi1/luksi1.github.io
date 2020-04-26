@@ -116,11 +116,13 @@ Day 3 applies and tests the waters that start in Day 2. After the eye-opening mo
 
 Personally, and I can't stress this enough, every beginning begins with uncalculable issues that you could never have imagined. Make time for these issue! They'll come. I promise. You can mitigate these issues by bringing in help or buying support. If you can, and you trust the help you're buying, you probably should. It helps with a lot of these issues. But sometimes you can't. Maybe there's no money in the bank. But maybe even more likely, this "Infrastructure as Code" thingy is probably very grassroot-ish and your team can't really formulate a business case. No enterprise in their right mind is going to drop a few hundred thousand on some TSM upgrades and SSH key deployments. It ain't happenin'. But the "unknown unknowns" cut both ways. Not only do you not only not know what issues you could potentially run into, you don't know what potential issues you're going to solve. No matter though how you twist and turn, you're business case is going to look shoddy! 
 
-`- We have a fantastic idea that's going to solve a look of stuff.
-`-  Like what?
-`- We're not sure.
-`- What kind of risks do you foresee?
-`- No idea.
+```
+- We have a fantastic idea that's going to solve a look of stuff.
+-  Like what?
+- We're not sure.
+- What kind of risks do you foresee?
+- No idea.
+```
 
 This is one of those cases where you could literally be laughed out of the board room.
 
