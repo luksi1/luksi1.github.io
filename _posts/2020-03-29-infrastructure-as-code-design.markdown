@@ -47,13 +47,107 @@ SOLID principles are used as the basis for virtually all, if not all, object ori
 
 ### Day 1
 
-If you're one of those lucky people that have gone cloud-only, your Day 1 has probably gone the way of the telegram. For those of us stuck in the world of virtual machines, SSH, RDP, and tedious change orders you're stuck with operating a lot of shit and hopping through a spider web of bureaucracy. This "shit" piles up. Sharepoint. Exchange. Elasticsearch. An Oracle RAC cluster here. A hand full of MS SQL server there. A splatter of IIS servers. Everybody has an ESB hanging around. All of those servers need to get provisioned and that expensive software isn't going to install itself. All of this starts though to grow. The pain point simply becomes not having enough competent hands. The digitalization journey is just running at a faster pace than those hands can type. Something has to give. For us, we simply wanted a way to easily manage SSH keys and Tivoli Storage Manager configurations for a few hundred servers.
+If you're one of those lucky people that have gone cloud-only, your Day 1 has probably gone the way of the telegram. For those of us stuck in the world of virtual machines, SSH, RDP, and tedious change orders you're stuck with operating a lot of shit and hopping through a spider web of bureaucracy. This "shit" piles up. Sharepoint. Exchange. Elasticsearch. Tomcat. Apache. An Oracle RAC cluster here. A hand full of MS SQL servers there. A splatter of IIS servers. Maybe an ESB. Maybe two? Possibly even three? These servers need to get provisioned and that expensive software isn't going to install itself. The pain point eventually becomes not having enough competent hands to take care of downstream demand, while maintaining a reasonable operational state. The digitalization journey is running at a faster pace than those hands can type. Something has to give. 
+
+For us, we simply wanted a way to easily manage SSH keys and Tivoli Storage Manager configurations for a few hundred servers. TSM upgrades could take a few days. Configuration changes would also take a few days. Add those changes to the simple fact that we were always finding out several weeks later about an unknown server that never got updated. Additionally, We were spending an inordinate amount of time installing SSH keys to suppliers and/or developers. We started loosing control of our infrastructure. We really didn't have a clue who had access to what. Permissions started with a change and then continued forever. In the end, we sat down and simply asked, "Can't we do better than this?"
 
 ### Day 2
 
-This is where configuration management tools come in and save the day. Ansible, Puppet, Chef, or Saltstack provide toolsets so that these hands can begin to program up their infrastructure. Upgrades in the future can start with an existing code base. Those lovely Windows end-of-life projects can now simply begin with the click of a button. Those new public SSH keys can be installed on all of those hundreds of Unix servers with a click. Everybody breathes a sigh of relief and some of that pain is gone. We never thought we'd make it and yet now we just automated some of this shit that was taking forever to do manually.
+Configuration management tools approach these Day 1 problems by turning the problem on its head. Instead of competent hands typing away, performing ad hoc changes on servers based on downstream and upstream demand, the enterprise's fleet of servers suddenly become configureable artifacts. Just like an application, these artifacts can be patched, altered, released and tested. Those hands suddenly move from SSH and RDP as their toolset over to their favorite IDE. Instead of installing a packet with let's say:
 
-### Problem - Day 2
+```bash
+ssh -l root foo.domain.com "apt-get install -y apache2"
+```
+
+Your Ops tech does something like:
+
+```puppet
+node 'foo.domain' {
+    packet {'apache2':
+      ensure => 'installed',
+    }
+}
+```
+
+This becomes kind of nice. This is an example of a simple package installation, but those pesky Tivoli Storage Manager upgrades and configurations that we had now take on a different look. We can create a simple in-house repository, package up the latest release to Debian packages (Tivoli Storage Manager previously only had RPM packages), and pop them in to our repo.
+
+File `manifests/tsm.pp` looks something like this:
+
+```puppet
+apt::source {'my_repo':
+  location => 'https://repo.domain.com',
+  key      => {
+      'id'     => '123456789',
+      'server' => 'https://gpg.domain.com',
+  }
+}
+
+package {'tsm':
+  ensure => 'latest',
+  require => Apt::Source['my_repo],
+}
+```
+
+And then every Unix server that we had in our fleet, could have a `site.pp` file with something like:
+
+```puppet
+node default {
+    include ::tsm
+}
+```
+
+Wow! How much nicer is this? We can release a new TSM package and it's black magic! TSM just upgrades itself on the server! We don't miss a server, or we do... but then we simply add a puppet agent and then we never miss it again! We can toss in a configuration file for good measure by simply adding the following line to `manifests/tsm.pp`.
+
+```puppet
+
+file {'/opt/tivoli/conf/tsm.sys
+    ensure => file,
+    source => 'puppet:///modules/my_repo/tsm.configuration',
+}
+```
+
+Now, everything that's in the file `tsm.configuration` just magically appears on **EVERY** server in our enterprise!
+
+Looking back, it's hard to express how amazing my first step into the world of "Infrastructure as Code" really was. I had programmed enough to understand code, but back then "code" for me was a mess of Perl scripts lying around on my Ubuntu PC to do some kind of regex, text parsing. Some of these scripts were tossed into cronjobs. Maybe somebody wanted an Oracle database updated. Maybe someone wanted an email. Now though, with "Infrastructure as Code", our infrastructure could be manipulated and coded and altered and controlled. It's hard to express in words, but everything changed at this moment.
+
+### Day 3
+
+Day 3 applies and tests the waters that start in Day 2. After the eye-opening moment of discovering "Infrastructure as Code", there is a suddent realization that all of this code needs to get written. Everything that needs to get done for the first time is really easy... until it's not. Donald Rumsfeld once made the comment about the risks and problems of invading Iraq many years ago, speaking about the "unknown unknowns". In other words, you not only run into problems that you didn't assess, but rather no one even knows that a calculable issue even exists.
+
+Personally, and I can't stress this enough, every beginning begins with uncalculable issues that you could never have imagined. Make time for these issue! They'll come. I promise. You can mitigate these issues by bringing in help or buying support. If you can, and you trust the help you're buying, you probably should. It helps with a lot of these issues. But sometimes you can't. Maybe there's no money in the bank. But maybe even more likely, this "Infrastructure as Code" thingy is probably very grassroot-ish and your team can't really formulate a business case. No enterprise in their right mind is going to drop a few hundred thousand on some TSM upgrades and SSH key deployments. It ain't happenin'. But the "unknown unknowns" cut both ways. Not only do you not only not know what issues you could potentially run into, you don't know what potential issues you're going to solve. No matter though how you twist and turn, you're business case is going to look shoddy! 
+
+- We have a fantastic idea that's going to solve a look of stuff.
+- Like what?
+- We're not sure.
+- What kind of risks do you foresee?
+- No idea.
+
+This is one of those cases where you could literally be laughed out of the board room.
+
+In our experience, everything was from the grassroots. We installed a Puppet server on a test server and built a site.pp from scratch. We built our TSM configuration templates and made them as simple as we could. We created "node definitions" for every server and we were more or less content.
+
+```puppet
+node {'server1.domain.com':
+  include ::tsm
+  include ::unix_staff_ssh_keys
+}
+
+node {'server2.domain.com':
+  include ::tsm
+  include ::unix_staff_ssh_keys
+  include ::wordpress_devs_ssh_keys
+}
+
+node {'server3.domain.com':
+  include ::tsm
+  include ::unix_staff_server_keys
+  include ::java_devs_ssh_keys
+}
+```
+
+### Day 4
+
+
 
 Things are going along smoothly. Your server though turn yellow in Nagios, warning that 30 certificates are going to expire in 14 days, so you send away a CSR to Verisign and your feeling cool. You got this shit automated. You'll just... wait. Shit. We didn't encrypt anything.
 
