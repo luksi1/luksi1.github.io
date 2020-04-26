@@ -118,7 +118,7 @@ Personally, and I can't stress this enough, every beginning begins with uncalcul
 
 ```
 - We have a fantastic idea that's going to solve a look of stuff.
--  Like what?
+- Like what?
 - We're not sure.
 - What kind of risks do you foresee?
 - No idea.
